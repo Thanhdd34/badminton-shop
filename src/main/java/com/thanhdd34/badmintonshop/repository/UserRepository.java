@@ -1,4 +1,4 @@
-package com.thanhdd34.badmintonshop.repsitory;
+package com.thanhdd34.badmintonshop.repository;
 
 import com.thanhdd34.badmintonshop.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
