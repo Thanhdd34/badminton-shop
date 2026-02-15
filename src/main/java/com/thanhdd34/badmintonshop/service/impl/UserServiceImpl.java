@@ -1,5 +1,7 @@
 package com.thanhdd34.badmintonshop.service.impl;
 
+import com.thanhdd34.badmintonshop.dto.UserCreateRequestDTO;
+import com.thanhdd34.badmintonshop.dto.UserResponseDTO;
 import com.thanhdd34.badmintonshop.entity.User;
 import com.thanhdd34.badmintonshop.entity.enums.Role;
 import com.thanhdd34.badmintonshop.repository.UserRepository;
@@ -15,23 +17,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user){
-        //Check user ton tai
-        userRepository.findByUsername(user.getUsername()).ifPresent(u -> {
-            throw new RuntimeException("Username already exists!");
-        });
+    public UserResponseDTO createUser(UserCreateRequestDTO userRequest){
+        User user = new User();
 
-        //set role mac dinh
-        user.setRole(Role.USER);
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(userRequest.getPassword());
+        user.setEmail(userRequest.getEmail());
 
-        //save user
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        return new UserResponseDTO(
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail()
+
+        );
     }
 
     @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public UserResponseDTO getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found!"));
+
+        return new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
+        );
     }
 
 }

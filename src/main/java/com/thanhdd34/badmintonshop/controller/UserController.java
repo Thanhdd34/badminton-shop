@@ -1,8 +1,11 @@
 package com.thanhdd34.badmintonshop.controller;
 
 
+import com.thanhdd34.badmintonshop.dto.UserCreateRequestDTO;
+import com.thanhdd34.badmintonshop.dto.UserResponseDTO;
 import com.thanhdd34.badmintonshop.entity.User;
 import com.thanhdd34.badmintonshop.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,15 +20,13 @@ public class UserController {
 
     //create user
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user){
-        User savedUser = userService.createUser(user);
-        return ResponseEntity.ok(savedUser);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateRequestDTO userRequest){
+        return ResponseEntity.ok(userService.createUser(userRequest));
     }
 
     //get user
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id){
-        User user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id){
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 }

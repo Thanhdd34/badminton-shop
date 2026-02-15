@@ -1,10 +1,12 @@
 package com.thanhdd34.badmintonshop.service;
 
+import com.thanhdd34.badmintonshop.dto.UserCreateRequestDTO;
+import com.thanhdd34.badmintonshop.dto.UserResponseDTO;
 import com.thanhdd34.badmintonshop.entity.User;
 
 public interface UserService {
-    User createUser(User user);
+    UserResponseDTO createUser(UserCreateRequestDTO userRequest);
 
-    User getUserById(Long id);
+    UserResponseDTO getUserById(Long id);
 }
 
