@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+//Entity la class Java đại diện cho 1 bảng trong database
 @Entity
 @Table(name = "users")
 @Getter

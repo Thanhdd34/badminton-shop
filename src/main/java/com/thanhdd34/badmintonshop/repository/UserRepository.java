@@ -4,7 +4,7 @@ import com.thanhdd34.badmintonshop.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
-
+// Reponsityory la lop trung gian giua service va database. chi thao tac voi database
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
