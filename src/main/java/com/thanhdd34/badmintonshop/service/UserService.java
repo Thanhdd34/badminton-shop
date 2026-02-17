@@ -6,6 +6,7 @@ import com.thanhdd34.badmintonshop.entity.User;
 
 //service xu ly logic
 public interface UserService {
+
     UserResponseDTO createUser(UserCreateRequestDTO userRequest);
 
     UserResponseDTO getUserById(Long id);

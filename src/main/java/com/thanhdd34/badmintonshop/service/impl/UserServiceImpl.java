@@ -1,29 +1,43 @@
 package com.thanhdd34.badmintonshop.service.impl;
 
+import com.thanhdd34.badmintonshop.config.PasswordConfig;
 import com.thanhdd34.badmintonshop.dto.UserCreateRequestDTO;
 import com.thanhdd34.badmintonshop.dto.UserResponseDTO;
+import com.thanhdd34.badmintonshop.entity.Role;
 import com.thanhdd34.badmintonshop.entity.User;
-import com.thanhdd34.badmintonshop.entity.enums.Role;
+import com.thanhdd34.badmintonshop.repository.RoleReponsitory;
 import com.thanhdd34.badmintonshop.repository.UserRepository;
 import com.thanhdd34.badmintonshop.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Set;
+
+import static java.util.Set.*;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleReponsitory roleReponsitory;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                           RoleReponsitory roleReponsitory){
         this.userRepository = userRepository;
-    }
+        this.passwordEncoder = passwordEncoder;
+        this.roleReponsitory = roleReponsitory;
+    };
+
 
     @Override
     public UserResponseDTO createUser(UserCreateRequestDTO userRequest){
         User user = new User();
 
         user.setUsername(userRequest.getUsername());
-        user.setPassword(userRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setEmail(userRequest.getEmail());
-
+        Role userRole = roleReponsitory.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("ROLE_USER not found!"));
+        user.setRoles(Set.of(userRole));
         User savedUser = userRepository.save(user);
 
         return new UserResponseDTO(

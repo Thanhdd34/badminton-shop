@@ -1,6 +1,5 @@
 package com.thanhdd34.badmintonshop.entity;
 
-import com.thanhdd34.badmintonshop.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 //Entity la class Java đại diện cho 1 bảng trong database
 @Entity
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class User {
 
     @Id
@@ -31,9 +33,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Column(name="created_at")
     private LocalDateTime createdAt;
 
@@ -41,5 +40,13 @@ public class User {
     protected void onCreateAt(){
         this.createdAt = LocalDateTime.now();
     }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 }
 
