@@ -29,9 +29,5 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id){
         return ResponseEntity.ok(userService.getUserById(id));
     }
-    @GetMapping("/ping")
-    public String ping() {
-        return "pong";
-    }
 
 }
