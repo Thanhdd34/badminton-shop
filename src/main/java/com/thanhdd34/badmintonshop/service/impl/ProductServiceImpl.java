@@ -5,26 +5,31 @@ import com.thanhdd34.badmintonshop.dto.product.ProductResponseDTO;
 import com.thanhdd34.badmintonshop.dto.product.ProductUpdateRequestDTO;
 import com.thanhdd34.badmintonshop.entity.Product;
 import com.thanhdd34.badmintonshop.entity.ProductStatus;
+import com.thanhdd34.badmintonshop.exception.ResourceNotFoundException;
 import com.thanhdd34.badmintonshop.repository.ProductRepository;
 import com.thanhdd34.badmintonshop.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
-    //create Product
+    // ================= CREATE =================
+
     @Override
-    public ProductResponseDTO createProduct(ProductCreateRequestDTO request){
+    public ProductResponseDTO createProduct(ProductCreateRequestDTO request) {
+
         Product product = new Product();
         product.setName(request.getName());
         product.setDescription(request.getDescription());
@@ -33,64 +38,79 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(ProductStatus.ACTIVE);
         product.setCreatedAt(LocalDateTime.now());
 
-        Product savedProduct = productRepository.save(product);
+        Product saved = productRepository.save(product);
 
-        return mapToResponse(savedProduct);
+        return mapToResponse(saved);
     }
 
-    //update product
+    // ================= UPDATE =================
+    // PUT style (update toàn bộ)
+
     @Override
     public ProductResponseDTO updateProduct(Long id, ProductUpdateRequestDTO request) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        if (request.getName() != null)
-            product.setName(request.getName());
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setStock(request.getStock());
+        product.setStatus(request.getStatus());
 
-        if (request.getDescription() != null)
-            product.setDescription(request.getDescription());
+        Product updated = productRepository.save(product);
 
-        if (request.getPrice() != null)
-            product.setPrice(request.getPrice());
-
-        if (request.getStock() != null)
-            product.setStock(request.getStock());
-
-        return mapToResponse(productRepository.save(product));
+        return mapToResponse(updated);
     }
 
-    //get product by id
+    // ================= GET BY ID =================
+
     @Override
+    @Transactional(readOnly = true)
     public ProductResponseDTO getProductById(Long id) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        // Public chỉ nên thấy ACTIVE product
+        if (product.getStatus() != ProductStatus.ACTIVE) {
+            throw new ResourceNotFoundException("Product not available");
+        }
 
         return mapToResponse(product);
     }
 
+    // ================= GET ALL (PUBLIC) =================
+
     @Override
-    public List<ProductResponseDTO> getAllProducts() {
-        return List.of();
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDTO> getAllProducts(Pageable pageable) {
+
+        return productRepository
+                .findByStatus(ProductStatus.ACTIVE, pageable)
+                .map(this::mapToResponse);
     }
 
+    // ================= DELETE (SOFT DELETE) =================
 
-    //delete product
     @Override
     public void deleteProduct(Long id) {
 
-        if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Product not found");
-        }
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        productRepository.deleteById(id);
+        // Soft delete thay vì xóa khỏi DB
+        product.setStatus(ProductStatus.INACTIVE);
+
+        productRepository.save(product);
     }
 
+    // ================= MAPPER =================
 
     private ProductResponseDTO mapToResponse(Product product) {
 
         ProductResponseDTO dto = new ProductResponseDTO();
+
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
@@ -101,5 +121,4 @@ public class ProductServiceImpl implements ProductService {
 
         return dto;
     }
-
 }

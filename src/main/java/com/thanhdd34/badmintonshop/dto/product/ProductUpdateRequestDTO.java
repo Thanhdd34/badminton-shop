@@ -1,6 +1,7 @@
 //admin cap nhat san pham
 package com.thanhdd34.badmintonshop.dto.product;
 
+import com.thanhdd34.badmintonshop.entity.ProductStatus;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,4 +20,6 @@ public class ProductUpdateRequestDTO {
 
     @Min(value = 0, message = "Stock must be >= 0!")
     private Integer stock;
+
+    private ProductStatus status;
 }
