@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
@@ -18,7 +16,14 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<Page<ProductResponseDTO>> getAllProducts(Pageable pageable) {
+    public ResponseEntity<Page<ProductResponseDTO>> getProducts(
+            @RequestParam(required = false) String keyword,
+            Pageable pageable
+    ) {
+        if (keyword != null && !keyword.isBlank()) {
+            return ResponseEntity.ok(productService.searchProducts(keyword, pageable));
+        }
+
         return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 

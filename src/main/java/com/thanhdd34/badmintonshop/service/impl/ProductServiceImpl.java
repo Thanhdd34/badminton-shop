@@ -29,7 +29,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDTO createProduct(ProductCreateRequestDTO request) {
-
         Product product = new Product();
         product.setName(request.getName());
         product.setDescription(request.getDescription());
@@ -38,17 +37,14 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(ProductStatus.ACTIVE);
         product.setCreatedAt(LocalDateTime.now());
 
-        Product saved = productRepository.save(product);
-
-        return mapToResponse(saved);
+        Product savedProduct = productRepository.save(product);
+        return mapToResponse(savedProduct);
     }
 
     // ================= UPDATE =================
-    // PUT style (update toàn bộ)
 
     @Override
     public ProductResponseDTO updateProduct(Long id, ProductUpdateRequestDTO request) {
-
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
@@ -58,9 +54,8 @@ public class ProductServiceImpl implements ProductService {
         product.setStock(request.getStock());
         product.setStatus(request.getStatus());
 
-        Product updated = productRepository.save(product);
-
-        return mapToResponse(updated);
+        Product updatedProduct = productRepository.save(product);
+        return mapToResponse(updatedProduct);
     }
 
     // ================= GET BY ID =================
@@ -68,11 +63,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductResponseDTO getProductById(Long id) {
-
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        // Public chỉ nên thấy ACTIVE product
         if (product.getStatus() != ProductStatus.ACTIVE) {
             throw new ResourceNotFoundException("Product not available");
         }
@@ -80,14 +73,21 @@ public class ProductServiceImpl implements ProductService {
         return mapToResponse(product);
     }
 
-    // ================= GET ALL (PUBLIC) =================
+    // ================= GET ALL =================
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProductResponseDTO> getAllProducts(Pageable pageable) {
+        return productRepository.findByStatus(ProductStatus.ACTIVE, pageable)
+                .map(this::mapToResponse);
+    }
 
-        return productRepository
-                .findByStatus(ProductStatus.ACTIVE, pageable)
+    // ================= SEARCH =================
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDTO> searchProducts(String keyword, Pageable pageable) {
+        return productRepository.searchByKeyword(keyword, pageable)
                 .map(this::mapToResponse);
     }
 
@@ -95,22 +95,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long id) {
-
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        // Soft delete thay vì xóa khỏi DB
         product.setStatus(ProductStatus.INACTIVE);
-
         productRepository.save(product);
     }
 
     // ================= MAPPER =================
 
     private ProductResponseDTO mapToResponse(Product product) {
-
         ProductResponseDTO dto = new ProductResponseDTO();
-
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
@@ -118,7 +113,6 @@ public class ProductServiceImpl implements ProductService {
         dto.setStock(product.getStock());
         dto.setStatus(product.getStatus());
         dto.setCreatedAt(product.getCreatedAt());
-
         return dto;
     }
 }
