@@ -31,4 +31,23 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
+
+    @GetMapping
+    public ResponseEntity<Page<ProductResponseDTO>> getProducts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId,
+            Pageable pageable
+    ) {
+
+        if (keyword != null && !keyword.isBlank()) {
+            return ResponseEntity.ok(productService.searchProducts(keyword, pageable));
+        }
+
+        if (categoryId != null) {
+            return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageable));
+        }
+
+        return ResponseEntity.ok(productService.getAllProducts(pageable));
+    }
+
 }

@@ -115,4 +115,14 @@ public class ProductServiceImpl implements ProductService {
         dto.setCreatedAt(product.getCreatedAt());
         return dto;
     }
+
+    //================== CATEGORY ==============
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDTO> getProductsByCategory(Long categoryId, Pageable pageable) {
+
+        return productRepository
+                .findByCategoryIdAndStatus(categoryId, ProductStatus.ACTIVE, pageable)
+                .map(this::mapToResponse);
+    }
 }
