@@ -15,22 +15,19 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping
-    public ResponseEntity<Page<ProductResponseDTO>> getProducts(
-            @RequestParam(required = false) String keyword,
-            Pageable pageable
-    ) {
-        if (keyword != null && !keyword.isBlank()) {
-            return ResponseEntity.ok(productService.searchProducts(keyword, pageable));
-        }
+//    @GetMapping
+//    public ResponseEntity<Page<ProductResponseDTO>> getProducts(
+//            @RequestParam(required = false) String keyword,
+//            Pageable pageable
+//    ) {
+//        if (keyword != null && !keyword.isBlank()) {
+//            return ResponseEntity.ok(productService.searchProducts(keyword, pageable));
+//        }
+//
+//        return ResponseEntity.ok(productService.getAllProducts(pageable));
+//    }
 
-        return ResponseEntity.ok(productService.getAllProducts(pageable));
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getProductById(id));
-    }
 
     @GetMapping
     public ResponseEntity<Page<ProductResponseDTO>> getProducts(
@@ -48,6 +45,11 @@ public class ProductController {
         }
 
         return ResponseEntity.ok(productService.getAllProducts(pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
 }

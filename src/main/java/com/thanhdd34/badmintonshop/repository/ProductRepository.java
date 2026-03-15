@@ -30,6 +30,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
        """)
     Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
-    @Override
+
     Page<Product> findByCategoryIdAndStatus(Long categoryId,ProductStatus status,Pageable pageable);
 }
