@@ -1,5 +1,6 @@
 package com.thanhdd34.badmintonshop.entity;
 
+import com.thanhdd34.badmintonshop.dto.order.CheckoutRequestDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +49,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
+    @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }

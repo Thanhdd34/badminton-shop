@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
-        product.setStock(request.getStock());
+        product.setQuantity(request.getStock());
         product.setStatus(ProductStatus.ACTIVE);
         product.setCreatedAt(LocalDateTime.now());
 
@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
-        product.setStock(request.getStock());
+        product.setQuantity(request.getStock());
         product.setStatus(request.getStatus());
 
         Product updatedProduct = productRepository.save(product);
@@ -110,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
-        dto.setStock(product.getStock());
+        dto.setStock(product.getQuantity());
         dto.setStatus(product.getStatus());
         dto.setCreatedAt(product.getCreatedAt());
         return dto;

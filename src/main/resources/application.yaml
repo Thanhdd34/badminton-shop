@@ -9,4 +9,14 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        format_sql: trues
+        format_sql: true   # bỏ chữ s thừa
+
+vnpay:
+  tmnCode: YOUR_TMN_CODE
+  hashSecret: YOUR_SECRET_KEY
+  url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  returnUrl: http://localhost:8080/api/payment/vnpay-return
+
+jwt:
+  secret: your-secret-key-at-least-32-characters-long
+  expiration: 86400000   # 1 ngày, tính bằng milliseconds

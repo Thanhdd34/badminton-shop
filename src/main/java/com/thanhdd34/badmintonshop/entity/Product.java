@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "products")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -31,9 +30,13 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
-    // Số lượng tồn kho
+    //số lượng tồn kho
     @Column(nullable = false)
-    private Integer stock;
+    private Integer quantity;
+
+    // Số lượng tồn kho
+//    @Column(nullable = false)
+//    private Integer stock;
 
     // Ảnh sản phẩm
     private String imageUrl;
@@ -65,5 +68,6 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
 }
 

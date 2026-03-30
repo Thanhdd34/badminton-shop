@@ -29,7 +29,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDTO checkout(CheckoutRequestDTO request) {
+    public Order checkout(CheckoutRequestDTO request) {
         Long userId = 1L;
 
         Cart cart = cartRepository.findByUserId(userId)
@@ -61,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new RuntimeException("Product is not available: " + product.getName());
             }
 
-            if (product.getStock() < cartItem.getQuantity()) {
+            if (product.getQuantity() < cartItem.getQuantity()) {
                 throw new RuntimeException("Not enough stock for product: " + product.getName());
             }
 
@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
 
             totalAmount = totalAmount.add(subtotal);
 
-            product.setStock(product.getStock() - cartItem.getQuantity());
+            product.setQuantity(product.getQuantity() - cartItem.getQuantity());
         }
 
         order.setTotalAmount(totalAmount);
@@ -88,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
 
         cart.getItems().clear();
 
-        return mapToResponse(savedOrder);
+        return savedOrder;
     }
 
     @Override
@@ -139,4 +139,5 @@ public class OrderServiceImpl implements OrderService {
 
         return dto;
     }
+
 }

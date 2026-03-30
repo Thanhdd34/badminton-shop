@@ -4,10 +4,7 @@ import com.thanhdd34.badmintonshop.dto.cart.AddToCartRequestDTO;
 import com.thanhdd34.badmintonshop.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/cart")
@@ -19,5 +16,16 @@ public class CartController {
     public ResponseEntity<?> addToCart(@RequestBody AddToCartRequestDTO requets){
         cartService.addToCart(requets);
         return ResponseEntity.ok("Add cart successfully");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> removeItem(@PathVariable Long cartItemId){
+        cartService.removeItem(cartItemId);
+        return ResponseEntity.ok("Remove cart successfully");
+    }
+    @GetMapping
+    public ResponseEntity<?> getMyCart(){{
+    return  ResponseEntity.ok(cartService.getMyCart());
+    }
     }
 }
